@@ -58,9 +58,21 @@
 (use-package command-log-mode)
 
 ;; theme and font
-(load-theme 'modus-vivendi-tinted t)
+(use-package doom-themes
+  :config
+  (setq doom-themes-enable-bold t
+	doom-themes-enable-italic t) 
+  (load-theme 'doom-palenight t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  )
+;; (load-theme 'modus-vivendi-tinted t)
 
+;; font
 (set-face-attribute 'default nil :font "Fira Code Retina" :height 180)
+
+;; transparent
+(add-to-list 'default-frame-alist '(alpha-background . 90))
 
 ;; edit
 (use-package swiper)
@@ -102,8 +114,6 @@
   (setq ivy-initial-inputs-alist nil) ; Don't start serches with ^
   )
 
-
-
 (use-package  doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
@@ -129,22 +139,119 @@
    'which-key-local-map-description-face nil :weight 'bold))
 
 
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
+;; helpful
+(use-package helpful
+  :custom
+  (counsel-describe-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key)
+  )
 
+
+;; icons
+;; need to execute all-the-icons-install-fonts
+;; command
+(use-package all-the-icons)
+;; key for switch buffer 
+(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+
+
+;; general.el
+;; define key more easily
+(use-package general)
+;; define my own prefix function
+;; and this function can be used
+;; to define the key bindings
+(general-create-definer min/leader-keys
+  :prefix "SPC"
+  )
+
+(min/leader-keys
+  ;; at the normal mode
+  :keymaps 'normal
+  "t"  '(:ignore t :which-key "toggles")
+  "tt" '(counsel-load-theme :which-key "choose theme"))
+
+;; evil package settings
 (use-package evil
   :demand t
   :init
   (setq evil-want-integration t
 	evil-want-keybinding nil
 	evil-want-C-u-scroll t
+	evil-want-C-i-jump nil
 	evil-want-Y-yank-to-eol t
 	evil-split-window-below t
 	evil-vsplit-window-right t
 	evil-respect-visual-line-mode t
 	evil-undo-system 'undo-tree)
   :config
-  (evil-mode 1))
+  (evil-mode 1)
+  ;; in the insert mode
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  ;; Use visual line motions even outside of visual-line-mode buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+  ;; move when the lines are wraped
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+;; collections
+;; give you a stable evil configuration for
+;; different modes
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+;; hydra
+;; tie related commands into a family of short bindings
+;; with a common prefix
+(use-package hydra)
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+;; resize font
+(min/leader-keys
+  :keymaps 'normal
+  "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+
+;; projectile
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/Workspace")
+    (setq projectile-project-search-path '("~/Workspace")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+;; Magit
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package evil-magit
+  :after magit)
+
+
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 
 
 
@@ -222,10 +329,6 @@
 ;;; for c/c++ 
 
 
-
-
-
-;;; for version control
 
 
 
