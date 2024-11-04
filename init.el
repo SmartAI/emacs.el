@@ -24,8 +24,7 @@
 ;; for personal preference
 (setq inhibit-startup-message t
       visible-bell t
-      ring-bell-function 'ignore
-      )
+      ring-bell-function 'ignore)
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror 'nomessage)
@@ -173,12 +172,6 @@
   :prefix "SPC"
   )
 
-(min/leader-keys
-  ;; at the normal mode
-  :keymaps 'normal
-  "t"  '(:ignore t :which-key "toggles")
-  "tt" '(counsel-load-theme :which-key "choose theme"))
-
 ;; evil package settings
 (use-package evil
   :demand t
@@ -212,7 +205,7 @@
   :config
   (evil-collection-init))
 
-;; hydra
+;;; hydra setting
 ;; tie related commands into a family of short bindings
 ;; with a common prefix
 (use-package hydra)
@@ -222,10 +215,6 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-;; resize font
-(min/leader-keys
-  :keymaps 'normal
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 
 ;; projectile
@@ -332,4 +321,15 @@
 
 
 
-;;; 
+;;; key bindings
+(min/leader-keys
+  ;; at the normal mode
+  :keymaps 'normal
+  ;; toggles
+  "t"  '(:ignore t :which-key "toggles")
+  "tt" '(counsel-load-theme :which-key "choose theme")
+  "ts" '(hydra-text-scale/body :which-key "scale text")
+  ;; save buffer
+  "w" '(save-buffer :which-key "save buffer")
+  )
+
