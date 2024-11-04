@@ -38,6 +38,9 @@
 (global-display-line-numbers-mode 1)
 (column-number-mode 1)
 
+;; osx meta key
+(setq mac-command-modifier 'meta)
+
 ;; remembering recent edited files
 (recentf-mode 1)
 ;; remembering minibuffer prompt history
@@ -245,9 +248,6 @@
 (use-package magit
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-(use-package evil-magit
-  :after magit)
 
 
 (use-package envrc
