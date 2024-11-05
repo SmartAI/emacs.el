@@ -72,9 +72,12 @@
 ;; (load-theme 'modus-vivendi-tinted t)
 
 ;; font
-(set-face-attribute 'default nil :font "Fira Code Retina" :height min/default-font-size)
+;; (set-face-attribute 'default nil :font "Fira Code Retina" :height min/default-font-size)
+(set-face-attribute 'default nil :font "MesloLGS NF" :height min/default-font-size)
+
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 180)
+;; (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 180)
+(set-face-attribute 'default nil :font "MesloLGS NF" :height 180)
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 220 :weight 'regular)
 
@@ -342,6 +345,27 @@
 
 
 
+;;; terminal
+(use-package term
+  :config
+  (setq explicit-shell-file-name "zsh") ;; Change this to zsh, etc
+  ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
+
+  ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode))
+
+
+(use-package vterm
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+  ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+  (setq vterm-max-scrollback 10000))
+
+
 
 
 ;;; Org mode settings  ---------------------------
@@ -522,6 +546,43 @@
 
 (use-package visual-fill-column
   :hook (org-mode . min/org-mode-visual-fill))
+
+
+
+;;; Dired
+
+;; issue of dired in macos
+(setq insert-directory-program "gls" dired-use-ls-dired t)
+(setq dired-listing-switches "-al --group-directories-first")
+
+
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
+
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+                                ("mkv" . "mpv"))))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
 
 ;;; key bindings
 (min/leader-keys
