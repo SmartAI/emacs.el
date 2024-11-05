@@ -16,6 +16,7 @@
 
 ;;; some basic configuration
 (set-fringe-mode 10)        ; Give some breathing room
+(setq use-short-answers t)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -25,7 +26,7 @@
 
 
 ;; for personal preference
-(defvar min/default-font-size 180)
+(defvar min/default-font-size 160)
 (setq inhibit-startup-message t
       visible-bell t
       ring-bell-function 'ignore)
@@ -80,9 +81,9 @@
 
 ;; Set the fixed pitch face
 ;; (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 180)
-(set-face-attribute 'default nil :font "MesloLGS NF" :height 180)
+(set-face-attribute 'default nil :font "MesloLGS NF" :height 160)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 220 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
 
 
 
@@ -276,10 +277,13 @@
 ;;; LSP settings
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . min/lsp-mode-setup)
+  :hook
+  ((prog-mode . lsp-deferred)
+   (lsp-mode . min/lsp-mode-setup))
   :init
   (setq lsp-keymap-prefix "C-c l")  
   :config
+  (setq lsp-clangd-binary-path "/opt/homebrew/opt/llvm/bin/clangd")
   (lsp-enable-which-key-integration t))
 
 (use-package lsp-treemacs
@@ -868,15 +872,6 @@
   (add-hook 'c-mode-common-hook
             (lambda ()
               (add-hook 'before-save-hook 'whitespace-cleanup nil t))))
-
-(use-package smartparens
-  :ensure t
-  :config
-  (require 'smartparens-config)
-  (add-hook 'prog-mode-hook #'smartparens-mode)
-  
-  (sp-local-pair 'c-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
-  (sp-local-pair 'c++-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET"))))
 
 
 ;; format when save
