@@ -548,11 +548,17 @@
   :hook (org-mode . min/org-mode-visual-fill))
 
 
+;; undo tree
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode))
 
 ;;; Dired
 
 ;; issue of dired in macos
+;; https://github.com/d12frosted/homebrew-emacs-plus/issues/383
 (setq insert-directory-program "gls" dired-use-ls-dired t)
+
 (setq dired-listing-switches "-al --group-directories-first")
 
 
