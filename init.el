@@ -74,9 +74,9 @@
 ;; font
 (set-face-attribute 'default nil :font "Fira Code Retina" :height min/default-font-size)
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 220)
+(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 180)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 195 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 220 :weight 'regular)
 
 
 
@@ -260,6 +260,7 @@
   (global-treesit-auto-mode))
 
 
+
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :hook ((prog-mode . lsp-deferred)
@@ -268,8 +269,16 @@
   (read-process-output-max (* 1024 1024))
   :init
   (setq lsp-completion-provider :none)
-  (setq lsp-keymap-prefix "C-c")
+  (setq lsp-keymap-prefix "C-c l")
   (setq lsp-diagnostics-provider :flycheck))
+
+
+;; Typescript
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :hook (typescript-mode . lsp-deferred)
+  :config
+  (setq typescript-indent-level 2))
 
 
 (use-package lsp-ui
@@ -385,8 +394,8 @@
 	  (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
 
   (setq org-refile-targets
-	'(("Archive.org" :maxlevel . 1)
-	  ("Tasks.org" :maxlevel . 1)))
+	'(("archive.org" :maxlevel . 1)
+	  ("tasks.org" :maxlevel . 1)))
 
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -479,7 +488,10 @@
 
 	  ("m" "Metrics Capture")
 	  ("mw" "Weight" table-line (file+headline "~/Workspace/orgfiles/metrics.org" "Weight")
-	   "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+	   "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)
+	  ("mh" "Hours" table-line (file+headline "~/Workspace/orgfiles/metrics.org" "Workd Hours")
+	   "| %U | %^{Work Hours} | %^{Notes} |" :kill-buffer t)
+	  ))
 
   
   (define-key global-map (kbd "C-c j")
@@ -526,6 +538,13 @@
   ;; org setting
   "o" '(:ignore t :which-key "org")
   "oa"'(org-agenda :which-key "org agenda")
+  "oc"'(org-capture :which-key "org capture")
+
+
+  ;; open files
+  "f" '(:ignore t :which-key "files")
+  "ff" '(counsel-find-file :which-key "find file")
+  "fr" '(counsel-recentf :which-key "recent file")
   )
 
 
