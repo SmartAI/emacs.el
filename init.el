@@ -24,7 +24,6 @@
 
 
 
-
 ;; for personal preference
 (defvar min/default-font-size 160)
 (setq inhibit-startup-message t
@@ -380,6 +379,7 @@
 (defun min/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
+  (flyspell-mode 1) ;; enable flyspell(need aspell installed)
   (visual-line-mode 1))
 
 
@@ -650,9 +650,35 @@
   :config
   (require 'org-roam-dailies) ;; Ensure the keymap is available
   ;; add the time to each entry
+  (setq lm-org-roam-tags
+	'("c++" "research" "course" "journal" "tool" "bio" "literature" "event" "website"
+	  "family"))
   (setq org-roam-dailies-capture-templates
-	'(("d" "default" entry "* %<%I:%M %p>: %?"
-           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+	'(("d" "default" plain "** %<%I:%M %p>: %?"
+	   :target (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n* Today's Focus\n" ("Logs")))
+	  ("w" "weekly" plain "%?"
+	   :target (file+head+olp "%<%Y-W%V>.org"
+				  "#+title: %<%Y-W%V>\n* This week's focus\n* This week's summary\n* Next week's plan\n"
+				  ("This week's focus")))
+	  ))
+  (setq org-roam-capture-templates
+	'(("b" "blog" plain "%?"
+	   :target (file+head "hugo/${title}.org"
+			      "#+HUGO_BASE_DIR: ~/Workspace/minai.dev
+#+HUGO_SECTION: ./posts
+#+HUGO_AUTO_SET_LASTMOD: t
+#+TITLE: ${title} 
+#+DATE: %U
+#+HUGO_TAGS: article
+#+HUGO_DRAFT: true\n")
+	   :immediate-finish nil 
+	   :unnarrowed t)
+	  ("d" "default" plain "%?"
+	   :target (file+head "${slug}_%<%Y-%m-%d--%H-%M-%S>.org" "#+title: ${title}\n#+created: %U\n#+filetags: %(completing-read \"Function tags: \" lm-org-roam-tags)\n#+startup: overview")
+	   :unnarrowed t)
+	  )
+
+	)
   (org-roam-db-autosync-mode))
 
 
@@ -699,11 +725,11 @@
              ("normalem" "ulem" t)
              ("" "capt-of" nil)
              ("activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10"
-              "microtype" nil ("pdflatex"))
+	      "microtype" nil ("pdflatex"))
              ("activate={true,nocompatibility},final,tracking=true,factor=1100,stretch=10,shrink=10"
-              "microtype" nil ("lualatex"))
+	      "microtype" nil ("lualatex"))
              ("protrusion={true,nocompatibility},final,factor=1100,stretch=10,shrink=10"
-              "microtype" nil ("xelatex"))
+	      "microtype" nil ("xelatex"))
              ("dvipsnames,svgnames" "xcolor" nil)
              ("colorlinks=true, linkcolor=DarkBlue, citecolor=BrickRed, urlcolor=DarkGreen" "hyperref" nil)))))
 
@@ -822,7 +848,7 @@
   (setq-default olivetti-body-width 130)
   (add-hook 'mixed-pitch-mode-hook  
             (lambda () 
-              (setq-local olivetti-body-width 90)))
+	      (setq-local olivetti-body-width 90)))
   
   ;; auto enable olivetti-mode
   (defvar auto-olivetti-modes
@@ -871,7 +897,7 @@
   ;; Remove extra whitespace
   (add-hook 'c-mode-common-hook
             (lambda ()
-              (add-hook 'before-save-hook 'whitespace-cleanup nil t))))
+	      (add-hook 'before-save-hook 'whitespace-cleanup nil t))))
 
 
 ;; format when save
@@ -879,3 +905,12 @@
   :ensure t
   :commands format-all-buffer
   :hook (prog-mode . format-all-mode))
+
+
+;;; blog with hugo
+(use-package ox-hugo
+  :ensure t   
+  :pin melpa  
+  :after ox)
+
+
