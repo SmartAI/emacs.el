@@ -21,6 +21,9 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
+
+
+
 ;; for personal preference
 (defvar min/default-font-size 180)
 (setq inhibit-startup-message t
@@ -831,3 +834,53 @@
   (add-hook 'after-change-major-mode-hook #'enable-olivetti-mode-maybe))
 
 
+
+;;; auto pairs
+(electric-pair-mode t)
+(show-paren-mode t)
+
+;; customize pair rule
+(setq electric-pair-pairs
+      '(
+        (?\" . ?\")
+        (?\{ . ?\})
+        (?\( . ?\))
+        (?\[ . ?\])
+        ))
+
+;; indent
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (global-aggressive-indent-mode 1)
+  ;; don't need indent in the following mode
+  (add-to-list 'aggressive-indent-excluded-modes 'html-mode))
+
+
+;; For C/C++ 
+(use-package cc-mode
+  :config
+  (setq c-default-style "linux"
+        c-basic-offset 2)
+  ;; make sure indent for RET
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
+  ;; Remove extra whitespace
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (add-hook 'before-save-hook 'whitespace-cleanup nil t))))
+
+(use-package smartparens
+  :ensure t
+  :config
+  (require 'smartparens-config)
+  (add-hook 'prog-mode-hook #'smartparens-mode)
+  
+  (sp-local-pair 'c-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
+  (sp-local-pair 'c++-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET"))))
+
+
+;; format when save
+(use-package format-all
+  :ensure t
+  :commands format-all-buffer
+  :hook (prog-mode . format-all-mode))
