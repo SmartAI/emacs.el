@@ -8,3 +8,5 @@ places
 recentf
 *.el~
 projectile*
+/transient/
+/README.org~
