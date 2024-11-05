@@ -261,16 +261,24 @@
 
 
 
+(defun min/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
+
+
+;;; LSP settings
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook ((prog-mode . lsp-deferred)
-	 (lsp-mode . lsp-enable-which-key-integration))
-  :custom
-  (read-process-output-max (* 1024 1024))
+  :hook (lsp-mode . min/lsp-mode-setup)
   :init
-  (setq lsp-completion-provider :none)
-  (setq lsp-keymap-prefix "C-c l")
-  (setq lsp-diagnostics-provider :flycheck))
+  (setq lsp-keymap-prefix "C-c l")  
+  :config
+  (lsp-enable-which-key-integration t))
+
+(use-package lsp-treemacs
+  :after lsp)
+
+(use-package lsp-ivy)
 
 
 ;; Typescript
@@ -285,6 +293,7 @@
   :hook (lsp-mode . lsp-ui-mode))
 
 
+;; check
 (use-package flycheck
   :hook (lsp-mode . flycheck-mode)
   :bind (:map flycheck-mode-map
@@ -293,6 +302,7 @@
   :custom (flycheck-display-errors-delay .3))
 
 
+;; completion something like company
 (use-package corfu
   :custom
   (corfu-cycle t)
@@ -314,21 +324,18 @@
   (global-corfu-mode)
   (corfu-history-mode))
 
-
-
 ;; Adds icons to the pop-up window
 (use-package nerd-icons-corfu
   :after corfu
   :init (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 
+;; formatting using prettier
 (use-package apheleia
   :hook (prog-mode . apheleia-mode)
   :config
   (setf (alist-get 'prettier apheleia-formatters)
 	'("prettier" "--stdin-filepath" filepath)))
-
-
 
 
 ;;; for c/c++ 
@@ -516,14 +523,6 @@
 (use-package visual-fill-column
   :hook (org-mode . min/org-mode-visual-fill))
 
-
-
-
-
-
-
-
-
 ;;; key bindings
 (min/leader-keys
   ;; at the normal mode
@@ -546,5 +545,6 @@
   "ff" '(counsel-find-file :which-key "find file")
   "fr" '(counsel-recentf :which-key "recent file")
   )
+
 
 
