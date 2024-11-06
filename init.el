@@ -418,6 +418,21 @@
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
 
+  ;; reference file
+  (setq org-cite-global-bibliography '("~/Workspace/orgfiles/references.bib"))
+  ;; Load required libraries
+  (require 'oc)
+  (require 'oc-basic)
+  (require 'oc-csl)
+  (require 'oc-natbib)
+
+  ;; export using bibtex
+  (setq org-latex-pdf-process 
+	'("pdflatex -interaction nonstopmode -output-directory %o %f"
+          "bibtex %b"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+
   ;; agenda files
   (setq org-agenda-files
 	'("~/Workspace/orgfiles/tasks.org"
@@ -636,6 +651,10 @@
   :custom
   (org-roam-directory "~/Workspace/orgfiles/org-roam")
   (org-roam-completion-everywhere t)
+  ;; display tags
+  (setq org-roam-node-display-template
+	(concat "${title:*} "
+		(propertize "${tags:20}" 'face 'org-tag)))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
@@ -914,3 +933,14 @@
   :after ox)
 
 
+
+;;; yasnippets
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode 1))
+
+;; the snippet collections
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
