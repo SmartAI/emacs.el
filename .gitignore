@@ -12,3 +12,9 @@ projectile*
 /README.org~
 /.lsp-session-v1
 /bookmarks
+
+*.~undo-tree~
+*.db
+/.org-id-locations
+*~
+/tramp

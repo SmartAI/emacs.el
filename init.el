@@ -15,6 +15,7 @@
 
 
 ;;; some basic configuration
+
 (set-fringe-mode 10)        ; Give some breathing room
 (setq use-short-answers t)
 
