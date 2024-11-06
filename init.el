@@ -15,15 +15,11 @@
 
 
 ;;; some basic configuration
-
 (set-fringe-mode 10)        ; Give some breathing room
 (setq use-short-answers t)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-
-
 
 ;; for personal preference
 (defvar min/default-font-size 160)
@@ -631,11 +627,14 @@
   "oa"'(org-agenda :which-key "org agenda")
   "oc"'(org-capture :which-key "org capture")
 
-
   ;; open files
   "f" '(:ignore t :which-key "files")
   "ff" '(counsel-find-file :which-key "find file")
   "fr" '(counsel-recentf :which-key "recent file")
+
+  ;; roam notes
+  "n" '(:ignore t :which-key "org roam")
+  "nd" '(org-roam-dailies-capture-today :which-key "roam capture today")
   )
 
 
