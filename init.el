@@ -279,7 +279,10 @@
   :init
   (setq lsp-keymap-prefix "C-c l")  
   :config
-  (setq lsp-clangd-binary-path "/opt/homebrew/opt/llvm/bin/clangd")
+  ;; this is a bad idea especially I need clangd on different
+  ;; platforms, such as remotely edit some project
+  ;; (setq lsp-clangd-binary-path "/opt/homebrew/opt/llvm/bin/clangd")
+  (setq lsp-clangd-binary-path "clangd")
   (lsp-enable-which-key-integration t))
 
 (use-package lsp-treemacs
@@ -619,6 +622,7 @@
   "t"  '(:ignore t :which-key "toggles")
   "tt" '(counsel-load-theme :which-key "choose theme")
   "ts" '(hydra-text-scale/body :which-key "scale text")
+  "tl" '(display-line-numbers-mode :which-key "line number") 
   ;; save buffer
   "w" '(save-buffer :which-key "save buffer")
 
@@ -635,6 +639,7 @@
   ;; roam notes
   "n" '(:ignore t :which-key "org roam")
   "nd" '(org-roam-dailies-capture-today :which-key "roam capture today")
+  "nf" '(org-roam-node-find :which-key "find or create a node")
   )
 
 
@@ -944,3 +949,12 @@
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet)
+
+
+;;; for remote editing using tramp
+;; for debug
+;; tramp will match the remote prompt
+;; using a regexp, so some shell may cause
+;; issues such as fish.
+;; I simplely use bash on my Ubuntu remote machine
+(setq tramp-verbose 6)
